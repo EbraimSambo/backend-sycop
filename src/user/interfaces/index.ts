@@ -1,6 +1,7 @@
+import { UserCreateProps, UserCreateResult } from "../types";
 
 
 
 export interface IUserRepo{
-    create(): Promise<void>
+    create(values: UserCreateProps): Promise<UserCreateResult>
 }
