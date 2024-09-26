@@ -3,6 +3,7 @@ import { ErrorCreate, IUserRepo } from "../interfaces";
 import { UserCreateProps, UserCreateResult } from "../types";
 import { DatabaseService } from "src/database/database.service";
 import { User } from "../entities/user.entity";
+import { hash } from "bcryptjs";
 
 
 
@@ -18,7 +19,7 @@ export class UserRepository implements IUserRepo {
         const newUser = await this.databaseService.user.create({
             data: {
                 email: values.email,
-                password: values.password,
+                password: await hash(values.password, 14),
                 name: values.name
             }
         })

@@ -64,7 +64,7 @@ export class AuthService {
       }
     
       async validateUser(dto: LoginDto) {
-        const user = await this.userService.findUserById(dto.email);
+        const user = await this.userService.findUserEmail(dto.email);
     
         if(!user) throw new UnauthorizedException("Emial errado");
 
