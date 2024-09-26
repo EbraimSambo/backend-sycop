@@ -1,7 +1,8 @@
 import { Injectable } from "@nestjs/common";
-import { IUserRepo } from "../interfaces";
+import { ErrorCreate, IUserRepo } from "../interfaces";
 import { UserCreateProps, UserCreateResult } from "../types";
 import { DatabaseService } from "src/database/database.service";
+import { User } from "../entities/user.entity";
 
 
 
@@ -22,15 +23,32 @@ export class UserRepository implements IUserRepo {
             }
         })
 
-        const { email, createdAt, id, password,uuid,name} = newUser
-        
+        const { email, createdAt, id, password, uuid, name } = newUser
+
         return {
-            createdAt,
             id,
+            uuid,
             name,
             email,
             password,
-            uuid
+            createdAt,
         }
+    }
+
+
+    async findOne(id: number): Promise<User> {
+        return await this.databaseService.user.findUnique({
+            where: { id: id }
+        })
+    }
+
+    async findUserEmail(email: string): Promise<User> {
+        return await this.databaseService.user.findUnique({
+            where: { email }
+        })
+    }
+
+    async findAll(): Promise<User[]> {
+        return await this.databaseService.user.findMany()
     }
 }

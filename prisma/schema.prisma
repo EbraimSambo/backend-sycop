@@ -15,14 +15,15 @@ datasource db {
 
 model User {
   id         Int         @id @default(autoincrement())
-  uuid       String      @default(cuid())
+  uuid       String      @unique @default(cuid())
   name       String
   email      String      @unique
   password   String
   permission Permission?
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  appointments Appointments[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
 
   @@map("users")
 }
@@ -39,10 +40,11 @@ model Permission {
 }
 
 model Client {
-  id      Int       @id @default(autoincrement())
-  uuid    String    @default(cuid())
+  id      Int      @id @default(autoincrement())
+  uuid    String   @unique @default(cuid())
   phone   String
-  email   String    @unique
+  optionalPhone   String
+  email   String   @unique
   address Address?
 
   annex Annex[]
@@ -58,7 +60,7 @@ model Address {
   neighborhood String?
   municipality String?
   houseNumber  String?
-  clientId     Int @unique
+  clientId     Int     @unique
   client       Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   province     String  @default("Luanda")
 
@@ -80,7 +82,7 @@ model Annex {
 
 model Sale {
   id   Int    @id @default(autoincrement())
-  uuid String @default(cuid())
+  uuid String @unique @default(cuid())
 
   createdAt DateTime @default(now())
   client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
@@ -143,7 +145,7 @@ model DocModel {
 
 model Property {
   id           Int     @id @default(autoincrement())
-  uuid         String  @default(cuid())
+  uuid         String  @unique @default(cuid())
   sale         Sale[]
   value        Decimal
   initValue    Decimal
@@ -165,4 +167,26 @@ model Property {
 enum Role {
   admin
   normal
+}
+
+model Appointments {
+  id   Int    @id @default(autoincrement())
+  uuid String @unique @default(cuid())
+  name String
+  phone   String
+  optionalPhone   String?
+  email   String
+  bi String? 
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  stutus Boolean @default(false)
+  dateVisit String
+  visitTime String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("appointments")
 }
