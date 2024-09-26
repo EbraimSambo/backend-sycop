@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserReadService } from 'src/user/services/user-read/user-read.service';
 import { LoginDto } from './dtos/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { compare } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -15,9 +16,8 @@ export class AuthService {
 
         const EXPIRE_TIME = 20 * 1000;
 
-        const user = await this.userService.findUserEmail(values.email)
-
-        if (!user) throw new UnauthorizedException("Usuario não encontrado")
+        const user = await this.validateUser(values)
+        
         const payload = {
             username: user.email,
             sub: {
@@ -42,7 +42,7 @@ export class AuthService {
 
     }
     async refreshToken(user: any) {
-        
+
         const EXPIRE_TIME = 20 * 1000;
 
         const payload = {
@@ -63,4 +63,15 @@ export class AuthService {
         };
       }
     
+      async validateUser(dto: LoginDto) {
+        const user = await this.userService.findUserById(dto.email);
+    
+        if(!user) throw new UnauthorizedException("Emial errado");
+
+        if(!await compare(dto.password, user.password)) throw new UnauthorizedException("Palavrapasse Errada")
+
+          const { password, ...result } = user;
+
+          return result;
+      }
 }
