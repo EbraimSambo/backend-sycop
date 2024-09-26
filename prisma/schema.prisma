@@ -47,6 +47,7 @@ model Client {
 
   annex Annex[]
   sales Sale[]
+
   @@map("clients")
 }
 
@@ -78,9 +79,71 @@ model Sale {
   uuid String @default(cuid())
 
   createdAt DateTime @default(now())
-  client Client @relation(fields: [clientId], references: [id],onDelete: Cascade)
-  clientId Int
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  clientId  Int
+
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  installments Installments[]
   @@map("sales")
+}
+
+model Installments{
+  id   Int    @id @default(autoincrement())
+  value Decimal
+  status String
+  saleId Int
+  sale Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+}
+model Project {
+  id          Int     @id @default(autoincrement())
+  name        String
+  description String?
+
+  zone      Zone[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Zone {
+  id           Int     @id @default(autoincrement())
+  street       String?
+  neighborhood String?
+  municipality String?
+
+  projectId Int
+  project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  property  Property[]
+}
+
+model DocModel {
+  id     Int    @id @default(autoincrement())
+  text   String
+  body   String
+  footer String
+
+  propertyId Int
+  property   Property @relation(fields: [propertyId], references: [id])
+}
+
+model Property {
+  id           Int     @id @default(autoincrement())
+  uuid         String  @default(cuid())
+  sale         Sale[]
+  value        Decimal
+  initValue    Decimal
+  parcel       Decimal
+  description  String?
+  availability Boolean @default(false)
+
+  zoneId  Int
+  project Zone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+
+  docModel DocModel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
