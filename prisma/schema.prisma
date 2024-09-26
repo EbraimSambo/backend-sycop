@@ -43,7 +43,7 @@ model Client {
   uuid    String    @default(cuid())
   phone   String
   email   String    @unique
-  address Address[]
+  address Address?
 
   annex Annex[]
   sales Sale[]
@@ -58,7 +58,7 @@ model Address {
   neighborhood String?
   municipality String?
   houseNumber  String?
-  clientId     Int
+  clientId     Int @unique
   client       Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   province     String  @default("Luanda")
 
