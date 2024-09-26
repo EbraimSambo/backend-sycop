@@ -35,7 +35,7 @@ model Permission {
   userId       Int     @unique
   user         User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("permission")
+  @@map("permissions")
 }
 
 model Client {
@@ -61,6 +61,8 @@ model Address {
   clientId     Int
   client       Client  @relation(fields: [clientId], references: [id], onDelete: Cascade)
   province     String  @default("Luanda")
+
+  @@map("addresses")
 }
 
 model Annex {
@@ -72,6 +74,8 @@ model Annex {
   userId    Int
   user      Client   @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+
+  @@map("attachments")
 }
 
 model Sale {
@@ -86,16 +90,20 @@ model Sale {
   property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
   installments Installments[]
+
   @@map("sales")
 }
 
-model Installments{
-  id   Int    @id @default(autoincrement())
-  value Decimal
+model Installments {
+  id     Int     @id @default(autoincrement())
+  value  Decimal
   status String
   saleId Int
-  sale Sale @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  sale   Sale    @relation(fields: [saleId], references: [id], onDelete: Cascade)
+
+  @@map("installments")
 }
+
 model Project {
   id          Int     @id @default(autoincrement())
   name        String
@@ -104,6 +112,8 @@ model Project {
   zone      Zone[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("projects")
 }
 
 model Zone {
@@ -115,6 +125,8 @@ model Zone {
   projectId Int
   project   Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
   property  Property[]
+
+  @@map("zones")
 }
 
 model DocModel {
@@ -125,6 +137,8 @@ model DocModel {
 
   propertyId Int
   property   Property @relation(fields: [propertyId], references: [id])
+
+  @@map("docmodels")
 }
 
 model Property {
@@ -144,6 +158,8 @@ model Property {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("properties")
 }
 
 enum Role {
